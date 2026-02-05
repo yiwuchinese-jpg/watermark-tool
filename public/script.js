@@ -55,6 +55,45 @@ function handleSettingsChange() {
     updateOverlay();
 }
 
+// --- PWA Install Logic ---
+let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent Chrome 67 and earlier from automatically showing the prompt
+    e.preventDefault();
+    // Stash the event so it can be triggered later.
+    deferredPrompt = e;
+    // Update UI to notify the user they can add to home screen
+    installBtn.style.display = 'inline-flex';
+});
+
+installBtn.addEventListener('click', (e) => {
+    if (deferredPrompt) {
+        // Show the prompt
+        deferredPrompt.prompt();
+        // Wait for the user to respond to the prompt
+        deferredPrompt.userChoice.then((choiceResult) => {
+            if (choiceResult.outcome === 'accepted') {
+                console.log('User accepted the A2HS prompt');
+            } else {
+                console.log('User dismissed the A2HS prompt');
+            }
+            deferredPrompt = null;
+            installBtn.style.display = 'none';
+        });
+    } else {
+        // If no deferredPrompt (e.g. iOS), show instructions
+        alert('请点击浏览器底部的分享按钮 (Share)，然后选择“添加到主屏幕” (Add to Home Screen) 即可保存到桌面。');
+    }
+});
+
+// Also show button on iOS (checking user agent is rough but works for this purpose)
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+if (isIOS && !window.navigator.standalone) {
+    installBtn.style.display = 'inline-flex';
+}
+
 function updatePreview() {
     const container = document.getElementById('previewContainer');
     if (!selectedFile) {
