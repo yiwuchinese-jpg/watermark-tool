@@ -222,7 +222,8 @@ async function processImage(filePath, settings) {
     // Use PROCESSED_DIR instead of hardcoded path
     const outputPath = path.join(PROCESSED_DIR, `${name}_${Date.now()}${ext}`);
 
-    const image = sharp(filePath);
+    // Fix rotation for mobile uploads using .rotate()
+    const image = sharp(filePath).rotate();
     const metadata = await image.metadata();
     const width = metadata.width;
     const height = metadata.height;
