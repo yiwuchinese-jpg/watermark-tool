@@ -19,6 +19,62 @@ const TMP_DIR = process.env.VERCEL ? os.tmpdir() : __dirname;
 const UPLOAD_DIR = path.join(TMP_DIR, 'uploads');
 const PROCESSED_DIR = path.join(TMP_DIR, 'processed');
 
+// --- Optimization & Protection ---
+// 1. Concurrency Control
+// Limit simultaneous video processing to prevent CPU exhaustion on free tier
+const MAX_CONCURRENT_VIDEOS = 1;
+let activeVideoTasks = 0;
+const videoQueue = [];
+
+function processNextVideo() {
+    if (activeVideoTasks >= MAX_CONCURRENT_VIDEOS || videoQueue.length === 0) return;
+    
+    const { task, resolve, reject } = videoQueue.shift();
+    activeVideoTasks++;
+    
+    task()
+        .then(resolve)
+        .catch(reject)
+        .finally(() => {
+            activeVideoTasks--;
+            processNextVideo();
+        });
+}
+
+function queueVideoTask(task) {
+    return new Promise((resolve, reject) => {
+        videoQueue.push({ task, resolve, reject });
+        processNextVideo();
+    });
+}
+
+// 2. Auto Cleanup
+// Delete files older than 30 minutes to prevent disk full errors
+const CLEANUP_AGE_MS = 30 * 60 * 1000; 
+
+function cleanupOldFiles(dir) {
+    fs.readdir(dir, (err, files) => {
+        if (err) return console.error(`Cleanup error reading ${dir}:`, err);
+        
+        const now = Date.now();
+        files.forEach(file => {
+            const filePath = path.join(dir, file);
+            fs.stat(filePath, (err, stats) => {
+                if (err) return;
+                if (now - stats.mtimeMs > CLEANUP_AGE_MS) {
+                    fs.unlink(filePath, () => {}); // Ignore delete errors
+                }
+            });
+        });
+    });
+}
+
+// Run cleanup every 10 minutes
+setInterval(() => {
+    cleanupOldFiles(UPLOAD_DIR);
+    cleanupOldFiles(PROCESSED_DIR);
+}, 10 * 60 * 1000);
+
 // Setup ffmpeg
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath.path);
@@ -351,7 +407,8 @@ app.post('/process', upload.fields([{ name: 'file', maxCount: 1 }, { name: 'logo
         if (['.jpg', '.png', '.jpeg', '.webp'].includes(ext)) {
             outputPath = await processImage(file.path, processingSettings);
         } else if (['.mp4', '.mov', '.avi', '.mkv'].includes(ext)) {
-            outputPath = await processVideo(file.path, processingSettings);
+            // Use queue for video processing
+            outputPath = await queueVideoTask(() => processVideo(file.path, processingSettings));
         } else {
             return res.status(400).send('Unsupported file type');
         }
