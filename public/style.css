@@ -1,0 +1,310 @@
+:root {
+    /* Clean Professional Theme */
+    --primary-color: #2563eb; /* Royal Blue */
+    --primary-hover: #1d4ed8;
+    --bg-color: #f8fafc; /* Very Light Gray/White */
+    --card-bg: #ffffff;
+    --text-main: #0f172a; /* Slate 900 */
+    --text-secondary: #64748b; /* Slate 500 */
+    --border-color: #e2e8f0; /* Slate 200 */
+    --radius: 8px;
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    --input-bg: #ffffff;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+    min-height: 100vh;
+}
+
+.navbar {
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.75rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.navbar-content {
+    max-width: 1200px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.brand {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+
+.brand span {
+    color: var(--primary-color);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 2rem;
+}
+
+/* Panel Styling */
+.panel {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+.controls-panel {
+    height: fit-content;
+}
+
+h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.25rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+input[type="text"], 
+input[type="number"], 
+select {
+    width: 100%;
+    padding: 0.625rem;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: var(--text-main);
+    transition: all 0.2s;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus, 
+select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Standard Range Slider */
+input[type="range"] {
+    -webkit-appearance: none;
+    width: 100%;
+    background: transparent;
+    margin: 0.5rem 0;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    cursor: pointer;
+    margin-top: -6px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    border: 2px solid white;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 4px;
+    cursor: pointer;
+    background: var(--border-color);
+    border-radius: 2px;
+}
+
+/* Buttons */
+.btn-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem 1.25rem;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+    width: 100%;
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+    background-color: white;
+    border-color: var(--border-color);
+    color: var(--text-main);
+}
+
+.btn-secondary:hover {
+    background-color: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+.btn-outline:hover {
+    border-color: var(--text-main);
+    color: var(--text-main);
+}
+
+/* Preview Area */
+.preview-panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 600px;
+    background: #f1f5f9; /* Slightly darker than body for contrast */
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    padding: 2rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.preview-container {
+    position: relative;
+    max-width: 100%;
+    /* No fixed height, let content dictate */
+}
+
+.media-wrapper {
+    position: relative;
+    display: inline-block;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    line-height: 0;
+    background: white; /* White bg behind image just in case */
+    overflow: hidden; /* Ensure watermark never spills out */
+}
+
+.preview-media {
+    max-width: 100%;
+    max-height: 700px;
+    display: block;
+    width: auto;
+    height: auto;
+}
+
+/* Watermark Overlay */
+.watermark-overlay {
+    position: absolute;
+    cursor: move;
+    border: 1px solid transparent; /* Hidden by default */
+    user-select: none;
+    transform: translate(-50%, -50%);
+    /* CRITICAL: Ensure image inside scales to this container */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.watermark-overlay img {
+    width: 100%;
+    height: auto;
+    display: block;
+    pointer-events: none; /* Let clicks pass to overlay div */
+}
+
+.watermark-overlay:hover, 
+.watermark-overlay.active {
+    border: 1px dashed var(--primary-color);
+    background: rgba(37, 99, 235, 0.05);
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+    color: #cbd5e1;
+}
+
+/* Result Area */
+#resultSection {
+    margin-top: 2rem;
+    width: 100%;
+    text-align: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .container {
+        grid-template-columns: 1fr;
+        padding: 0 1rem;
+    }
+    
+    .navbar {
+        padding: 0.75rem 1rem;
+    }
+
+    .preview-panel {
+        order: -1;
+        padding: 1rem;
+        min-height: 400px;
+    }
+}

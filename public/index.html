@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线水印工具 | Online Watermark Tool</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="brand">
+                <span>💧</span> 在线水印工具
+            </div>
+            <div>
+                <span style="font-size: 0.9rem; color: var(--text-secondary);">技术支持 Justin 邮箱: 894825716@qq.com</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Left Panel: Controls -->
+        <div class="controls-panel">
+            <div class="panel-section">
+                <h3>1. 上传文件</h3>
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="document.getElementById('fileInput').click()">📁 选择文件</button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('cameraInput').click()">📷 拍照</button>
+                </div>
+                <input type="file" id="fileInput" name="file" accept="image/*,video/*" hidden onchange="handleFileSelect(this)">
+                <input type="file" id="cameraInput" name="file" accept="image/*" capture="environment" hidden onchange="handleFileSelect(this)">
+                <div id="fileName" style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">未选择文件</div>
+            </div>
+
+            <div class="panel-section">
+                <h3>2. 水印设置</h3>
+                <div class="form-group">
+                    <label>水印类型</label>
+                    <select id="watermarkType" onchange="handleSettingsChange()">
+                        <option value="logo">Logo 图片</option>
+                        <option value="tiled-image">Logo 铺满</option>
+                    </select>
+                </div>
+
+                <!-- Removed Text Settings -->
+
+                <div id="logoSettings">
+                    <div class="form-group">
+                        <label>上传 Logo</label>
+                        <input type="file" id="logoInput" accept="image/*" onchange="handleLogoSelect(this)">
+                        <div id="logoName" style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.2rem;"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>大小: <span id="sizeVal">5</span>%</label>
+                    <input type="range" id="wmSize" min="1" max="50" value="5" oninput="handleSettingsChange()">
+                </div>
+
+                <div class="form-group">
+                    <label>透明度: <span id="opacityVal">50</span>%</label>
+                    <input type="range" id="wmOpacity" min="0" max="100" value="50" oninput="handleSettingsChange()">
+                </div>
+
+                <div id="posSettings">
+                    <div class="form-group">
+                        <label>水平位置 (X): <span id="xVal">50</span>%</label>
+                        <input type="range" id="wmX" min="0" max="100" value="50" oninput="handleSettingsChange()">
+                    </div>
+                    <div class="form-group">
+                        <label>垂直位置 (Y): <span id="yVal">50</span>%</label>
+                        <input type="range" id="wmY" min="0" max="100" value="50" oninput="handleSettingsChange()">
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--primary-color);">✨ 提示：您可以直接在右侧预览图中拖动水印！</p>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="processFile()" id="processBtn">开始处理 & 下载</button>
+        </div>
+
+        <!-- Right Panel: Preview -->
+        <div class="preview-panel">
+            <div class="preview-container" id="previewContainer">
+                <div class="empty-state">
+                    <span class="empty-icon">🖼️</span>
+                    <p>请选择文件以预览</p>
+                </div>
+                <!-- Media and overlay will be injected here -->
+            </div>
+            
+            <div id="resultSection" style="display:none;">
+                <h3>处理完成 🎉</h3>
+                <div id="resultContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

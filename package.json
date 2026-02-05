@@ -1,0 +1,18 @@
+{
+  "name": "online-watermark-tool",
+  "version": "1.0.0",
+  "description": "Online version of JustinPro Watermark Tool",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "sharp": "^0.33.2",
+    "fluent-ffmpeg": "^2.1.2",
+    "ffmpeg-static": "^5.2.0",
+    "ffprobe-static": "^3.1.0",
+    "cors": "^2.8.5"
+  }
+}
