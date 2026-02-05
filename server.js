@@ -12,6 +12,7 @@ const os = require('os');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+sharp.concurrency(1);
 
 // Determine temp directory based on environment
 // Vercel allows writing only to /tmp
@@ -97,7 +98,12 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ 
+    storage: storage,
+    limits: {
+        fileSize: 40 * 1024 * 1024
+    }
+});
 
 // Ensure directories exist
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
@@ -113,8 +119,16 @@ async function generateLayerBuffer(layer, width, height) {
         if (tiledType === 'image' && layer.path) {
             try {
                 const imgPath = layer.path;
+                const maxDimension = 2000;
+                let baseImage = sharp(imgPath).rotate();
+                const baseMeta = await baseImage.metadata();
+                
+                if (baseMeta.width > maxDimension || baseMeta.height > maxDimension) {
+                    baseImage = baseImage.resize({ width: maxDimension, height: maxDimension, fit: 'inside' });
+                }
+
                 const targetImgWidth = Math.max(20, Math.round(width * (layer.size / 100)));
-                const imgBuffer = await sharp(imgPath)
+                const imgBuffer = await baseImage
                     .resize({ width: targetImgWidth })
                     .toBuffer();
 
@@ -145,7 +159,7 @@ async function generateLayerBuffer(layer, width, height) {
                     <rect width="100%" height="100%" fill="url(#tilePattern)" />
                 </svg>`;
 
-                const rasterizedBuffer = await sharp(Buffer.from(svgTiled)).png().toBuffer();
+                const rasterizedBuffer = await sharp(Buffer.from(svgTiled)).webp({ quality: 90 }).toBuffer();
                 return { buffer: rasterizedBuffer, isTiled: true };
 
             } catch (err) {
@@ -182,7 +196,7 @@ async function generateLayerBuffer(layer, width, height) {
                 <rect width="100%" height="100%" fill="url(#tilePattern)" />
             </svg>`;
 
-            const rasterizedBuffer = await sharp(Buffer.from(svgTiled)).png().toBuffer();
+            const rasterizedBuffer = await sharp(Buffer.from(svgTiled)).webp({ quality: 90 }).toBuffer();
             return { buffer: rasterizedBuffer, isTiled: true };
         }
     }
@@ -354,6 +368,7 @@ function processVideo(filePath, settings) {
 // API Endpoint
 app.post('/process', upload.fields([{ name: 'file', maxCount: 1 }, { name: 'logo', maxCount: 1 }]), async (req, res) => {
     try {
+        res.setTimeout(4 * 60 * 1000);
         if (!req.files || !req.files['file']) {
             return res.status(400).send('No file uploaded.');
         }
@@ -423,9 +438,12 @@ app.post('/process', upload.fields([{ name: 'file', maxCount: 1 }, { name: 'logo
     }
 });
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
 });
+server.setTimeout(4 * 60 * 1000);
+server.keepAliveTimeout = 4 * 60 * 1000;
+server.headersTimeout = 4 * 60 * 1000 + 1000;
 
 // Export app for Vercel
 module.exports = app;
